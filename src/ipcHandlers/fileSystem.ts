@@ -214,7 +214,17 @@ export const setupFileSystemHandlers = () => {
   ipcMain.handle("readDirectoryRecursive", async (_, dirPath) => {
     try {
       const files = await readDirectoryRecursive(dirPath)
-      return { success: true, files }
+      // 将文件内容转换为可序列化的格式
+      const serializableFiles = files.map((file) => {
+        if (file.type === "file") {
+          return {
+            ...file,
+            content: file.content ? file.content.toString("base64") : null,
+          }
+        }
+        return file
+      })
+      return { success: true, files: serializableFiles }
     } catch (error) {
       console.error("Error reading directory recursively:", error)
       return { success: false, error: error.message }
@@ -258,6 +268,16 @@ export const setupFileSystemHandlers = () => {
       const dirPath = result.filePath
       await fs.mkdir(dirPath, { recursive: true })
       return { success: true, path: dirPath }
+    } catch (error) {
+      return { success: false, error: error.message }
+    }
+  })
+
+  // 新增：处理showOpenDialog请求
+  ipcMain.handle("showOpenDialog", async (_, options) => {
+    try {
+      const result = await dialog.showOpenDialog(options)
+      return { success: true, ...result }
     } catch (error) {
       return { success: false, error: error.message }
     }

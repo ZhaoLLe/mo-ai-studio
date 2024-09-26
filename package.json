@@ -2,7 +2,7 @@
   "name": "mo-ai-studio",
   "private": true,
   "productName": "mo-ai-studio",
-  "version": "1.2.8",
+  "version": "1.5.1",
   "description": "mo ai studio local ai agent for everyone",
   "main": ".vite/build/main.js",
   "scripts": {
@@ -10,8 +10,14 @@
     "make:debug": "electron-forge make --arch=\"arm64,x64\" --debug",
     "package": "electron-forge package",
     "make": "cross-env $(cat .env | xargs) electron-forge make --arch=\"arm64,x64\"",
-    "publish:ele": "cross-env $(cat .env | xargs) electron-forge publish --arch=\"arm64,x64\"",
-    "lint": "eslint --ext .ts,.tsx ."
+    "make:darwin": "cross-env $(cat .env | xargs) electron-forge make --arch=\"arm64,x64\" --platform=darwin",
+    "make:win32": "cross-env $(cat .env | xargs) electron-forge make --arch=\"arm64,x64\" --platform=win32",
+    "make:all": "npm run make:darwin && npm run make:win32",
+    "publish:darwin": "cross-env $(cat .env | xargs) electron-forge publish --arch=\"arm64,x64\" --platform=darwin",
+    "publish:win32": "cross-env $(cat .env | xargs) electron-forge publish --arch=\"arm64,x64\" --platform=win32",
+    "publish:all": "rm -rf ./out && npm run publish:darwin && npm run publish:win32",
+    "lint": "eslint --ext .ts,.tsx .",
+    "git": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -51,11 +57,14 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
+    "electron-log": "^5.2.0",
+    "electron-screenshots": "^0.5.27",
     "electron-squirrel-startup": "^1.0.1",
     "electron-updater": "^6.3.4",
     "exceljs": "^4.4.0",
     "express": "^4.19.2",
     "ignore": "^5.3.2",
+    "jimp": "^1.6.0",
     "node-fetch": "2",
     "simple-git": "^3.26.0",
     "update-electron-app": "^3.0.0",
